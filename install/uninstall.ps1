@@ -53,9 +53,7 @@
     }
 
     Write-Host ""
-    Write-Host "Done. Close Excel completely and open it again." -ForegroundColor Green
-    Write-Host "  If the Code buttons are still on the Home tab, choose Home > Add-ins > Advanced,"
-    Write-Host "  right-click Code Highlighter under My Add-ins and choose Remove."
+    Write-Host "Done. Close Excel completely and open it again; the Code buttons will be gone." -ForegroundColor Green
     Write-Host ""
   } catch {
     Write-Host ""
