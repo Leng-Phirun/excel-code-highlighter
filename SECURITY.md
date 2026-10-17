@@ -2,7 +2,7 @@
 
 ## Reporting a problem
 
-Please report security problems privately by email to ariesking543@yahoo.com, not in a public issue. Include what you found and how to reproduce it. Fixes are released as soon as they're ready; because the add-in loads from GitHub Pages, most reach everyone without a reinstall.
+Please report security problems privately, not in a public issue: use **Report a vulnerability** on this repository's [Security tab](https://github.com/Leng-Phirun/excel-code-highlighter/security/advisories/new), or email ariesking543@yahoo.com. Include what you found and how to reproduce it. Fixes are released as soon as they're ready; because the add-in loads from GitHub Pages, most reach everyone without a reinstall.
 
 ## What the add-in can do
 
@@ -20,3 +20,5 @@ Both installers download only over HTTPS, and refuse a manifest that isn't Code 
 ## How releases are built
 
 GitHub Actions builds and deploys the site from `main` ([workflow](.github/workflows/pages.yml)). Actions are pinned to exact commits, dependencies install without running their install scripts, the build job can only read the repository, and only the deploy job can publish. The add-in has no runtime dependencies: the published JavaScript is this repository's own code.
+
+The repository has secret scanning with push protection, Dependabot alerts and security updates, and a rule that stops `main` from being force-pushed or deleted.
