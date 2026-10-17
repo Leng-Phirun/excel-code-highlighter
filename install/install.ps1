@@ -3,11 +3,12 @@
 #   irm https://leng-phirun.github.io/excel-code-highlighter/install.ps1 | iex
 #
 # What it does:
-#   1. Downloads the add-in's manifest to %USERPROFILE%\CodeHighlighter. (Not AppData:
-#      packaged apps redirect AppData writes, so a share there could point at nothing.)
+#   1. Downloads the add-in's manifest to %USERPROFILE%\CodeHighlighter and checks it is
+#      Code Highlighter's and points only at the add-in's own site. (Not AppData: packaged
+#      apps redirect AppData writes, so a share there could point at nothing.)
 #   2. Shares that folder as \\localhost\CodeHighlighter, readable only by you. Excel only
 #      accepts add-in catalogs on a network share, and creating one needs administrator
-#      permission, so Windows asks once.
+#      permission, so Windows asks once. Only that one command runs as administrator.
 #   3. Adds the share to Excel's trusted add-in catalogs (File > Options > Trust Center).
 # You then add Code Highlighter once in Excel, and it stays on the Home tab.
 #
@@ -26,30 +27,40 @@
   $catalogUrl = "\\localhost\$shareName"
   $folder = Join-Path $env:USERPROFILE "CodeHighlighter"
   $manifest = Join-Path $folder "manifest.xml"
+  $download = "$manifest.download"
+  $ownFiles = @("manifest.xml", "manifest.xml.download", "README.txt")
   $wef = "HKCU:\Software\Microsoft\Office\16.0\WEF"
 
   function Step($text) { Write-Host "  $text" }
 
-  function Share-Folder {
-    # Runs only New-SmbShare elevated; everything else stays in this (your) account.
-    $quote = { param($s) "'" + $s.Replace("'", "''") + "'" }
-    $user = [Security.Principal.WindowsIdentity]::GetCurrent().Name
-    $command = "`$ErrorActionPreference = 'Stop'; " +
-      "Get-SmbShare -Name $(& $quote $shareName) -ErrorAction SilentlyContinue | Remove-SmbShare -Force; " +
-      "New-SmbShare -Name $(& $quote $shareName) -Path $(& $quote $folder) -ReadAccess $(& $quote $user) " +
-      "-Description 'Code Highlighter add-in catalog for Excel' | Out-Null"
-    $encoded = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($command))
-    try {
-      $p = Start-Process powershell.exe -Verb RunAs -WindowStyle Hidden -Wait -PassThru `
-        -ArgumentList "-NoProfile -NonInteractive -EncodedCommand $encoded"
-    } catch {
-      return $false   # permission refused, or not an administrator
+  # Runs $script as administrator. Values travel base64-encoded, so no path or account name
+  # can change the script, and PowerShell is started by full path, not looked up.
+  function Invoke-Elevated([string]$script, [hashtable]$values) {
+    $prelude = foreach ($v in $values.GetEnumerator()) {
+      $b64 = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes([string]$v.Value))
+      "`$$($v.Key) = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('$b64'))"
     }
-    $p.ExitCode -eq 0 -and (Test-Path (Join-Path $catalogUrl "manifest.xml"))
+    $encoded = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes((@($prelude) + $script) -join "`n"))
+    $powershell = Join-Path $env:SystemRoot "System32\WindowsPowerShell\v1.0\powershell.exe"
+    try {
+      $p = Start-Process $powershell -Verb RunAs -WindowStyle Hidden -Wait -PassThru `
+        -ArgumentList "-NoProfile -NonInteractive -EncodedCommand $encoded"
+      return $p.ExitCode
+    } catch {
+      return -1   # permission refused, or not an administrator
+    }
   }
 
-  function Remove-DeveloperRegistration {
-    Remove-ItemProperty -Path "$wef\Developer" -Name $addinId -ErrorAction SilentlyContinue
+  function Assert-Manifest([string]$path) {
+    $settings = New-Object System.Xml.XmlReaderSettings
+    $settings.DtdProcessing = [System.Xml.DtdProcessing]::Prohibit
+    $reader = [System.Xml.XmlReader]::Create($path, $settings)
+    try { $doc = New-Object System.Xml.XmlDocument; $doc.Load($reader) } finally { $reader.Close() }
+    $urls = @([regex]::Matches($doc.OuterXml, 'https://[^"<\s]+') | ForEach-Object { $_.Value })
+    $foreign = @($urls | Where-Object { -not $_.StartsWith($site) })
+    if ($doc.OfficeApp.Id -ne $addinId -or $urls.Count -eq 0 -or $foreign.Count -gt 0) {
+      throw "The file downloaded from $site isn't the expected Code Highlighter manifest."
+    }
   }
 
   try {
@@ -57,13 +68,16 @@
     Write-Host "Installing Code Highlighter for Excel"
     [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
 
-    New-Item -ItemType Directory -Force -Path $folder | Out-Null
-    $download = "$manifest.download"
-    Invoke-WebRequest -UseBasicParsing -Uri ($site + "manifest.xml") -OutFile $download
-    if (-not (Select-String -Path $download -SimpleMatch $addinId -Quiet)) {
-      Remove-Item $download
-      throw "The file downloaded from $site isn't the Code Highlighter manifest."
+    # Never share a folder of yours that happens to have this name.
+    if (Test-Path $folder) {
+      $other = @(Get-ChildItem -Force $folder | Where-Object { $ownFiles -notcontains $_.Name })
+      if ($other.Count -gt 0) {
+        throw "$folder already exists and holds other files, so it won't be shared. Move or rename it, then run the installer again."
+      }
     }
+    New-Item -ItemType Directory -Force -Path $folder | Out-Null
+    Invoke-WebRequest -UseBasicParsing -Uri ($site + "manifest.xml") -OutFile $download
+    try { Assert-Manifest $download } catch { Remove-Item $download -ErrorAction SilentlyContinue; throw }
     Move-Item $download $manifest -Force
     Set-Content -Path (Join-Path $folder "README.txt") -Encoding ASCII -Value @(
       "This folder holds the manifest of the Code Highlighter add-in for Excel.",
@@ -73,10 +87,27 @@
     )
     Step "Downloaded the manifest to $folder"
 
-    $alreadyShared = Test-Path (Join-Path $catalogUrl "manifest.xml")
-    if (-not $alreadyShared) { Step "Sharing the folder (Windows asks for permission)..." }
-    if ($alreadyShared -or (Share-Folder)) {
-      if (-not $alreadyShared) { Step "Shared it as $catalogUrl, readable only by you" }
+    $shared = Test-Path (Join-Path $catalogUrl "manifest.xml")
+    if (-not $shared) {
+      Step "Sharing the folder (Windows asks for permission)..."
+      $code = Invoke-Elevated -values @{
+        Name = $shareName; Path = $folder; User = [Security.Principal.WindowsIdentity]::GetCurrent().Name
+      } -script @'
+$ErrorActionPreference = 'Stop'
+$existing = Get-SmbShare -Name $Name -ErrorAction SilentlyContinue
+if ($existing -and $existing.Path -ne $Path) { exit 2 }
+if ($existing) { Remove-SmbShare -Name $Name -Force }
+New-SmbShare -Name $Name -Path $Path -ReadAccess $User -FolderEnumerationMode AccessBased `
+  -Description 'Code Highlighter add-in catalog for Excel' | Out-Null
+'@
+      if ($code -eq 2) {
+        throw "A different folder is already shared as $catalogUrl; the installer leaves it alone. Use the manual steps instead."
+      }
+      $shared = $code -eq 0 -and (Test-Path (Join-Path $catalogUrl "manifest.xml"))
+      if ($shared) { Step "Shared it as $catalogUrl, readable only by you" }
+    }
+
+    if ($shared) {
       $catalogs = "$wef\TrustedCatalogs"
       $existing = Get-ChildItem $catalogs -ErrorAction SilentlyContinue |
         Where-Object { (Get-ItemProperty $_.PSPath).Url -eq $catalogUrl }
@@ -88,7 +119,7 @@
         New-ItemProperty -Path $key.PSPath -Name Flags -Value 1 -PropertyType DWord | Out-Null
       }
       Step "Added it to Excel's trusted add-in catalogs"
-      Remove-DeveloperRegistration
+      Remove-ItemProperty -Path "$wef\Developer" -Name $addinId -ErrorAction SilentlyContinue
       $next = @(
         "In Excel, choose Home > Add-ins > Advanced (or More Add-ins), open the",
         "SHARED FOLDER tab, select Code Highlighter and choose Add. You only do this once."

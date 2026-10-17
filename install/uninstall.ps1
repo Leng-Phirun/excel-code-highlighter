@@ -3,7 +3,9 @@
 #   irm https://leng-phirun.github.io/excel-code-highlighter/uninstall.ps1 | iex
 #
 # Undoes install.ps1: removes the trusted catalog entry, the developer registration, the
-# \\localhost\CodeHighlighter share (Windows asks for permission) and the downloaded manifest.
+# \\localhost\CodeHighlighter share (Windows asks for permission) and the files the
+# installer created. It touches the share only if it points at the installer's folder, and
+# deletes the folder only if nothing else is in it.
 #
 # The build replaces https://localhost:3000/ with the address the add-in is hosted at.
 # Keep this file ASCII: "irm | iex" may decode it as Latin-1.
@@ -15,9 +17,28 @@
   $shareName = "CodeHighlighter"
   $catalogUrl = "\\localhost\$shareName"
   $folder = Join-Path $env:USERPROFILE "CodeHighlighter"
+  $ownFiles = @("manifest.xml", "manifest.xml.download", "README.txt")
   $wef = "HKCU:\Software\Microsoft\Office\16.0\WEF"
 
   function Step($text) { Write-Host "  $text" }
+
+  # Runs $script as administrator. Values travel base64-encoded, so no path can change the
+  # script, and PowerShell is started by full path, not looked up.
+  function Invoke-Elevated([string]$script, [hashtable]$values) {
+    $prelude = foreach ($v in $values.GetEnumerator()) {
+      $b64 = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes([string]$v.Value))
+      "`$$($v.Key) = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('$b64'))"
+    }
+    $encoded = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes((@($prelude) + $script) -join "`n"))
+    $powershell = Join-Path $env:SystemRoot "System32\WindowsPowerShell\v1.0\powershell.exe"
+    try {
+      $p = Start-Process $powershell -Verb RunAs -WindowStyle Hidden -Wait -PassThru `
+        -ArgumentList "-NoProfile -NonInteractive -EncodedCommand $encoded"
+      return $p.ExitCode
+    } catch {
+      return -1
+    }
+  }
 
   try {
     Write-Host ""
@@ -34,13 +55,14 @@
 
     if (Test-Path $catalogUrl) {
       Step "Removing the shared folder (Windows asks for permission)..."
-      $command = "Get-SmbShare -Name '$shareName' -ErrorAction SilentlyContinue | Remove-SmbShare -Force"
-      $encoded = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($command))
-      try {
-        Start-Process powershell.exe -Verb RunAs -WindowStyle Hidden -Wait `
-          -ArgumentList "-NoProfile -NonInteractive -EncodedCommand $encoded"
-      } catch { }
-      if (Test-Path $catalogUrl) {
+      $code = Invoke-Elevated -values @{ Name = $shareName; Path = $folder } -script @'
+$existing = Get-SmbShare -Name $Name -ErrorAction SilentlyContinue
+if ($existing -and $existing.Path -ne $Path) { exit 2 }
+if ($existing) { Remove-SmbShare -Name $Name -Force }
+'@
+      if ($code -eq 2) {
+        Step "$catalogUrl shares a different folder, not the installer's, so it was left alone."
+      } elseif (Test-Path $catalogUrl) {
         Step "The share $catalogUrl is still there; remove it later in Computer Management > Shared Folders."
       } else {
         Step "Removed the share $catalogUrl"
@@ -48,8 +70,13 @@
     }
 
     if (Test-Path $folder) {
-      Remove-Item $folder -Recurse -Force
-      Step "Deleted $folder"
+      foreach ($name in $ownFiles) { Remove-Item (Join-Path $folder $name) -Force -ErrorAction SilentlyContinue }
+      if (@(Get-ChildItem -Force $folder).Count -eq 0) {
+        Remove-Item $folder -Force
+        Step "Deleted $folder"
+      } else {
+        Step "Removed the installer's files; $folder holds other files, so it was kept."
+      }
     }
 
     Write-Host ""

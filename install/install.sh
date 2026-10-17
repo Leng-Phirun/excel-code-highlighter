@@ -3,8 +3,10 @@
 #
 #   curl -fsSL https://leng-phirun.github.io/excel-code-highlighter/install.sh | sh
 #
-# It downloads the add-in's manifest into Excel's add-in folder
+# It downloads the add-in's manifest over HTTPS, checks it is Code Highlighter's and points
+# only at the add-in's own site, and copies it into Excel's add-in folder
 # (~/Library/Containers/com.microsoft.Excel/Data/Documents/wef), where Excel picks it up.
+# Nothing runs as administrator.
 #
 # The build replaces https://localhost:3000/ with the address the add-in is hosted at.
 set -eu
@@ -25,9 +27,12 @@ fi
 mkdir -p "$wef"
 download="$(mktemp)"
 trap 'rm -f "$download"' EXIT
-curl -fsSL "${site}manifest.xml" -o "$download"
-if ! grep -q "$addin_id" "$download"; then
-  echo "The file downloaded from $site isn't the Code Highlighter manifest."
+curl --proto '=https' --tlsv1.2 -fsSL "${site}manifest.xml" -o "$download"
+# Accept only Code Highlighter's manifest, pointing only at the add-in's own site.
+urls="$(grep -o 'https://[^"<[:space:]]*' "$download" || true)"
+if ! grep -q "<Id>$addin_id</Id>" "$download" || [ -z "$urls" ] \
+  || ! printf '%s\n' "$urls" | awk -v site="$site" 'index($0, site) != 1 { bad = 1 } END { exit bad }'; then
+  echo "The file downloaded from $site isn't the expected Code Highlighter manifest."
   exit 1
 fi
 cp "$download" "$wef/code-highlighter.xml"

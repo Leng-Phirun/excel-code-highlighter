@@ -33,7 +33,17 @@ irm https://leng-phirun.github.io/excel-code-highlighter/install.ps1 | iex
 
 Choose **Yes** when Windows asks for permission. Then, once, in Excel: **Home › Add-ins › Advanced**, open the **SHARED FOLDER** tab, select **Code Highlighter** and choose **Add**. The **Code** group stays on the Home tab from then on.
 
-The script downloads the manifest to `%USERPROFILE%\CodeHighlighter`, shares that folder as `\\localhost\CodeHighlighter` (read-only, for your account only; this is the step that needs permission) and adds it to Excel's trusted add-in catalogs: the manual way below, automated. Without permission it registers Code Highlighter as a developer add-in instead, which you choose under **Home › Add-ins** each time Excel starts. [Read the script](install/install.ps1) before running it if you like.
+The script downloads the manifest to `%USERPROFILE%\CodeHighlighter`, checks that it's Code Highlighter's and points only at this add-in's site, shares that folder as `\\localhost\CodeHighlighter` and adds it to Excel's trusted add-in catalogs: the manual way below, automated. Sharing the folder is the one step that needs permission, and the only command that runs as administrator. The share is read-only and only your account can open it. Without permission it registers Code Highlighter as a developer add-in instead, which you choose under **Home › Add-ins** each time Excel starts.
+
+To read the script before it runs, download it, open it, then run it:
+
+```powershell
+irm https://leng-phirun.github.io/excel-code-highlighter/install.ps1 -OutFile install.ps1; notepad install.ps1
+```
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\install.ps1
+```
 
 To remove it:
 
@@ -49,7 +59,7 @@ Open Excel once, quit it, then open **Terminal**, paste this and press Return:
 curl -fsSL https://leng-phirun.github.io/excel-code-highlighter/install.sh | sh
 ```
 
-Open Excel and choose **Home › Add-ins › Code Highlighter**. The script copies the manifest into Excel's add-in folder ([script](install/install.sh)). To remove it, run the same command with `uninstall.sh`.
+Open Excel and choose **Home › Add-ins › Code Highlighter**. The script checks the manifest and copies it into Excel's add-in folder; nothing runs as administrator ([script](install/install.sh)). To read it first, run `curl -fsSLO https://leng-phirun.github.io/excel-code-highlighter/install.sh`, open `install.sh`, then run `sh install.sh`. To remove the add-in, run the install command with `uninstall.sh` instead.
 
 #### Excel on the web
 
