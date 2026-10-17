@@ -16,7 +16,7 @@ Requires Microsoft 365 Excel for Windows (Version 2501+), Mac (16.93+) or Excel 
 
 Code Highlighter isn't in the Office store. It runs from https://code-highlighter-eight.vercel.app, and you install it by giving Excel its manifest file:
 
-**[Download manifest.xml](https://code-highlighter-eight.vercel.app/manifest.xml)** (right-click › Save link as), or take it from the [latest release](../../releases/latest).
+**[Download manifest.xml](https://code-highlighter-eight.vercel.app/manifest.xml)** (right-click › Save link as), or take it from the [latest release](https://github.com/Leng-Phirun/excel-code-highlighter/releases/latest).
 
 Updates arrive automatically: the add-in loads from the web each time, so you only reinstall if the manifest itself changes.
 
