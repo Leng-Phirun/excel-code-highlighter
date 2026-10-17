@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Code Highlighter</title>
+    <script src="https://officeapis.public.onecdn.static.microsoft/1/office.js"></script>
+    <link rel="stylesheet" href="taskpane.css" />
+  </head>
+  <body>
+    <main class="pane">
+      <header>
+        <h1>Code Highlighter</h1>
+        <p class="muted">Syntax colours for the code in your cells.</p>
+      </header>
+
+      <section class="actions" aria-label="Actions">
+        <button id="highlight" class="primary" type="button">Highlight selection</button>
+        <button id="highlight-sheet" type="button">Find code on this sheet</button>
+        <button id="clear" type="button">Remove highlighting</button>
+        <p id="status" class="status" role="status" aria-live="polite"></p>
+      </section>
+
+      <section aria-label="Auto-highlight">
+        <label class="toggle">
+          <input id="auto" type="checkbox" />
+          <span class="track" aria-hidden="true"></span>
+          <span>
+            <strong>Auto-highlight</strong>
+            <span class="muted block">Colour code as soon as you type or paste it into a cell. The language is detected for each cell.</span>
+          </span>
+        </label>
+        <label class="check"><input id="start-with-workbook" type="checkbox" /> Start Code Highlighter when this workbook opens</label>
+      </section>
+
+      <section aria-label="Appearance">
+        <h2>Appearance</h2>
+        <div class="field">
+          <label for="language">Language</label>
+          <select id="language"></select>
+        </div>
+        <div class="field">
+          <label for="theme">Theme</label>
+          <select id="theme"></select>
+        </div>
+        <pre id="preview" class="preview" aria-label="Theme preview"></pre>
+        <div class="row">
+          <div class="field grow">
+            <label for="font">Font</label>
+            <select id="font"></select>
+          </div>
+          <div class="field">
+            <label for="size">Size</label>
+            <select id="size"></select>
+          </div>
+        </div>
+        <label class="check"><input id="fill" type="checkbox" /> Fill cells with the theme background</label>
+        <p id="fill-warning" class="warning" hidden>Dark themes use light text, which is hard to read without the fill.</p>
+        <label class="check"><input id="fit-columns" type="checkbox" /> Widen columns to fit the code</label>
+        <label class="check"><input id="autofit-rows" type="checkbox" /> Fit row height to the code</label>
+        <p class="muted small">Language applies to Highlight; Auto-detect picks one per cell. Changes apply the next time you highlight, so select cells and choose Highlight to restyle them.</p>
+      </section>
+
+      <footer class="muted small">
+        <a href="support.html" target="_blank" rel="noopener">Help</a> ·
+        <a href="privacy.html" target="_blank" rel="noopener">Privacy</a> ·
+        <a href="terms.html" target="_blank" rel="noopener">Terms</a>
+      </footer>
+    </main>
+
+    <div id="unsupported" class="unsupported" hidden>
+      <h1>Update Excel to use Code Highlighter</h1>
+      <p>This add-in colours text inside cells, which needs a version of Excel that supports the Excel JavaScript API 1.18. Update Office, or use Excel on the web.</p>
+    </div>
+  </body>
+</html>

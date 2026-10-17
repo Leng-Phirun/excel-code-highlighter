@@ -1,0 +1,274 @@
+:root {
+  --text: #242424;
+  --muted: #616161;
+  --border: #d1d1d1;
+  --surface: #ffffff;
+  --surface-alt: #f5f5f5;
+  --accent: #0f6cbd;
+  --accent-hover: #115ea3;
+  --accent-text: #ffffff;
+  --warning: #8a3707;
+  --error: #b10e1c;
+  --success: #0e700e;
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text: #f3f3f3;
+    --muted: #c4c4c4;
+    --border: #5c5c5c;
+    --surface: #1f1f1f;
+    --surface-alt: #2c2c2c;
+    --accent: #479ef5;
+    --accent-hover: #62abf5;
+    --accent-text: #0a0a0a;
+    --warning: #f7b16b;
+    --error: #ff99a4;
+    --success: #6ccb5f;
+  }
+}
+
+/* Windows High Contrast: system colours, and a visible state for the switch. */
+@media (forced-colors: active) {
+  .toggle .track {
+    border-color: CanvasText;
+    background: Canvas;
+  }
+  .toggle .track::after {
+    forced-color-adjust: none;
+    background: CanvasText;
+  }
+  .toggle input:checked + .track {
+    border-color: Highlight;
+    background: Highlight;
+  }
+  .toggle input:checked + .track::after {
+    background: HighlightText;
+  }
+  .preview {
+    forced-color-adjust: none;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--surface);
+  color: var(--text);
+  font: 14px/1.4 "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif;
+}
+
+.pane {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 16px;
+}
+
+h1 {
+  margin: 0 0 2px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+h2 {
+  margin: 0 0 10px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.muted {
+  color: var(--muted);
+  margin: 0;
+}
+
+.small {
+  font-size: 12px;
+}
+
+.block {
+  display: block;
+  font-size: 12px;
+}
+
+button {
+  font: inherit;
+  padding: 7px 12px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  text-align: center;
+}
+
+button:hover:not(:disabled) {
+  background: var(--surface-alt);
+}
+
+button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-text);
+  font-weight: 600;
+}
+
+button.primary:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+button:focus-visible,
+select:focus-visible,
+input:focus-visible + .track,
+.check input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.status {
+  min-height: 1.4em;
+  margin: 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.status.success {
+  color: var(--success);
+}
+
+.status.error {
+  color: var(--error);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.row {
+  display: flex;
+  gap: 8px;
+}
+
+.grow {
+  flex: 1;
+}
+
+select {
+  font: inherit;
+  font-size: 14px;
+  color: var(--text);
+  padding: 5px 8px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--surface);
+  min-width: 0;
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.check input {
+  margin: 0;
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent);
+}
+
+.warning {
+  margin: -4px 0 0 24px;
+  font-size: 12px;
+  color: var(--warning);
+}
+
+.toggle {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.toggle input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.toggle .track {
+  flex: none;
+  position: relative;
+  width: 40px;
+  height: 20px;
+  margin-top: 1px;
+  border: 1px solid var(--muted);
+  border-radius: 10px;
+  background: var(--surface);
+  transition: background 0.15s;
+}
+
+.toggle .track::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--muted);
+  transition: transform 0.15s;
+}
+
+.toggle input:checked + .track {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.toggle input:checked + .track::after {
+  background: var(--accent-text);
+  transform: translateX(20px);
+}
+
+.preview {
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font: 12px/1.45 Consolas, "Cascadia Mono", Menlo, Monaco, "Courier New", monospace;
+  white-space: pre;
+  overflow-x: auto;
+}
+
+footer a {
+  color: var(--accent);
+}
+
+.unsupported {
+  padding: 16px;
+}
+
+.unsupported h1 {
+  font-size: 16px;
+}

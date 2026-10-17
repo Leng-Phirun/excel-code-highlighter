@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0"
+           xmlns:ov="http://schemas.microsoft.com/office/taskpaneappversionoverrides"
+           xsi:type="TaskPaneApp">
+  <Id>61510d37-86c6-4098-95c3-ee4c889899c1</Id>
+  <Version>1.0.0.0</Version>
+  <ProviderName>aries</ProviderName>
+  <DefaultLocale>en-US</DefaultLocale>
+  <DisplayName DefaultValue="Code Highlighter"/>
+  <Description DefaultValue="Syntax-highlights code inside Excel cells in 31 languages, including Python, SQL, Bash, PowerShell, VBA, JavaScript, C# and Java, with automatic language detection."/>
+  <IconUrl DefaultValue="https://localhost:3000/assets/icon-32.png"/>
+  <HighResolutionIconUrl DefaultValue="https://localhost:3000/assets/icon-64.png"/>
+  <SupportUrl DefaultValue="https://localhost:3000/support.html"/>
+  <Hosts>
+    <Host Name="Workbook"/>
+  </Hosts>
+  <Requirements>
+    <Sets DefaultMinVersion="1.1">
+      <!-- 1.18 adds RangeTextRun: per-character fonts inside a single cell. -->
+      <Set Name="ExcelApi" MinVersion="1.18"/>
+      <Set Name="SharedRuntime" MinVersion="1.1"/>
+    </Sets>
+  </Requirements>
+  <DefaultSettings>
+    <SourceLocation DefaultValue="https://localhost:3000/taskpane.html"/>
+  </DefaultSettings>
+  <Permissions>ReadWriteDocument</Permissions>
+  <VersionOverrides xmlns="http://schemas.microsoft.com/office/taskpaneappversionoverrides" xsi:type="VersionOverridesV1_0">
+    <Hosts>
+      <Host xsi:type="Workbook">
+        <Runtimes>
+          <!-- One long-lived runtime shared by the ribbon buttons, the task pane and auto-highlight. -->
+          <Runtime resid="Taskpane.Url" lifetime="long"/>
+        </Runtimes>
+        <DesktopFormFactor>
+          <GetStarted>
+            <Title resid="GetStarted.Title"/>
+            <Description resid="GetStarted.Description"/>
+            <LearnMoreUrl resid="Support.Url"/>
+          </GetStarted>
+          <FunctionFile resid="Taskpane.Url"/>
+          <ExtensionPoint xsi:type="PrimaryCommandSurface">
+            <OfficeTab id="TabHome">
+              <Group id="CodeHighlighter.Group">
+                <Label resid="Group.Label"/>
+                <Icon>
+                  <bt:Image size="16" resid="Highlight.16"/>
+                  <bt:Image size="32" resid="Highlight.32"/>
+                  <bt:Image size="80" resid="Highlight.80"/>
+                </Icon>
+                <Control xsi:type="Button" id="CodeHighlighter.Highlight">
+                  <Label resid="Highlight.Label"/>
+                  <Supertip>
+                    <Title resid="Highlight.Label"/>
+                    <Description resid="Highlight.Tooltip"/>
+                  </Supertip>
+                  <Icon>
+                    <bt:Image size="16" resid="Highlight.16"/>
+                    <bt:Image size="32" resid="Highlight.32"/>
+                    <bt:Image size="80" resid="Highlight.80"/>
+                  </Icon>
+                  <Action xsi:type="ExecuteFunction">
+                    <FunctionName>highlightSelection</FunctionName>
+                  </Action>
+                </Control>
+                <Control xsi:type="Button" id="CodeHighlighter.Clear">
+                  <Label resid="Clear.Label"/>
+                  <Supertip>
+                    <Title resid="Clear.Label"/>
+                    <Description resid="Clear.Tooltip"/>
+                  </Supertip>
+                  <Icon>
+                    <bt:Image size="16" resid="Clear.16"/>
+                    <bt:Image size="32" resid="Clear.32"/>
+                    <bt:Image size="80" resid="Clear.80"/>
+                  </Icon>
+                  <Action xsi:type="ExecuteFunction">
+                    <FunctionName>clearSelection</FunctionName>
+                  </Action>
+                </Control>
+                <Control xsi:type="Button" id="CodeHighlighter.Settings">
+                  <Label resid="Settings.Label"/>
+                  <Supertip>
+                    <Title resid="Settings.Label"/>
+                    <Description resid="Settings.Tooltip"/>
+                  </Supertip>
+                  <Icon>
+                    <bt:Image size="16" resid="Settings.16"/>
+                    <bt:Image size="32" resid="Settings.32"/>
+                    <bt:Image size="80" resid="Settings.80"/>
+                  </Icon>
+                  <Action xsi:type="ShowTaskpane">
+                    <!-- No TaskpaneId: a shared runtime supports exactly one task pane. -->
+                    <SourceLocation resid="Taskpane.Url"/>
+                  </Action>
+                </Control>
+              </Group>
+            </OfficeTab>
+          </ExtensionPoint>
+        </DesktopFormFactor>
+      </Host>
+    </Hosts>
+    <Resources>
+      <bt:Images>
+        <bt:Image id="Highlight.16" DefaultValue="https://localhost:3000/assets/highlight-16.png"/>
+        <bt:Image id="Highlight.32" DefaultValue="https://localhost:3000/assets/highlight-32.png"/>
+        <bt:Image id="Highlight.80" DefaultValue="https://localhost:3000/assets/highlight-80.png"/>
+        <bt:Image id="Clear.16" DefaultValue="https://localhost:3000/assets/clear-16.png"/>
+        <bt:Image id="Clear.32" DefaultValue="https://localhost:3000/assets/clear-32.png"/>
+        <bt:Image id="Clear.80" DefaultValue="https://localhost:3000/assets/clear-80.png"/>
+        <bt:Image id="Settings.16" DefaultValue="https://localhost:3000/assets/settings-16.png"/>
+        <bt:Image id="Settings.32" DefaultValue="https://localhost:3000/assets/settings-32.png"/>
+        <bt:Image id="Settings.80" DefaultValue="https://localhost:3000/assets/settings-80.png"/>
+      </bt:Images>
+      <bt:Urls>
+        <bt:Url id="Taskpane.Url" DefaultValue="https://localhost:3000/taskpane.html"/>
+        <bt:Url id="Support.Url" DefaultValue="https://localhost:3000/support.html"/>
+      </bt:Urls>
+      <bt:ShortStrings>
+        <bt:String id="GetStarted.Title" DefaultValue="Code Highlighter is ready"/>
+        <bt:String id="Group.Label" DefaultValue="Code"/>
+        <bt:String id="Highlight.Label" DefaultValue="Highlight"/>
+        <bt:String id="Clear.Label" DefaultValue="Remove"/>
+        <bt:String id="Settings.Label" DefaultValue="Code Settings"/>
+      </bt:ShortStrings>
+      <bt:LongStrings>
+        <bt:String id="GetStarted.Description" DefaultValue="Select cells that contain code and choose Home > Highlight. The language is detected automatically. Open Code Settings to pick a language, theme or font."/>
+        <bt:String id="Highlight.Tooltip" DefaultValue="Syntax-highlight the code in the selected cells. The language is detected automatically."/>
+        <bt:String id="Clear.Tooltip" DefaultValue="Remove code highlighting from the selected cells."/>
+        <bt:String id="Settings.Tooltip" DefaultValue="Choose a colour theme and font, and turn auto-highlight on or off."/>
+      </bt:LongStrings>
+    </Resources>
+  </VersionOverrides>
+</OfficeApp>

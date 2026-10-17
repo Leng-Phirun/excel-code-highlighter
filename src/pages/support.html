@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Code Highlighter Help</title>
+    <style>
+      :root { color-scheme: light dark; }
+      body { margin: 0; font: 16px/1.6 "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, sans-serif; background: Canvas; color: CanvasText; }
+      main { max-width: 720px; margin: 0 auto; padding: 32px 16px 64px; }
+      h1 { font-size: 28px; margin-bottom: 4px; }
+      h2 { font-size: 20px; margin-top: 32px; }
+      code { font-family: Consolas, Menlo, monospace; font-size: 0.95em; }
+      li { margin: 4px 0; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Code Highlighter for Excel</h1>
+      <p>Code Highlighter colours code inside worksheet cells, the way a code editor does.</p>
+      <p>Supported languages (31): Python, Bash and Linux shell commands, PowerShell, Windows Batch, SQL, JavaScript, TypeScript, Java, C#, VBA / Visual Basic, C, C++, Go, Rust, Kotlin, Swift, PHP, Ruby, R, Scala, Dart, Lua, HTML/XML, CSS, JSON, YAML, TOML/INI, Markdown, Dockerfile, Terraform/HCL and diffs.</p>
+
+      <h2>Highlight code</h2>
+      <ol>
+        <li>Type or paste code into a cell. Press <kbd>Alt</kbd>+<kbd>Enter</kbd> (Windows) or <kbd>Option</kbd>+<kbd>Return</kbd> (Mac) for a new line inside a cell.</li>
+        <li>Select the cell, or a whole range of cells.</li>
+        <li>On the <strong>Home</strong> tab, choose <strong>Highlight</strong>.</li>
+      </ol>
+      <p>Only cells that hold text are changed. Numbers, dates and formulas are left alone.</p>
+
+      <h2>Choosing the language</h2>
+      <p>By default the language is detected separately for each cell, so a sheet can mix SQL, shell commands and Python. To force one language, pick it under <strong>Code Settings › Language</strong>; Highlight then uses it for every selected cell. Text with no sign of being code is set in a monospace font without colours.</p>
+      <p>Shell highlighting understands command lines copied from a terminal or documentation, including prompts such as <code>$</code> and <code>user@host:~$</code>, flags, pipes, redirects, variables and here-documents.</p>
+
+      <h2>Auto-highlight</h2>
+      <p>Open <strong>Home › Code Settings</strong> and turn on <strong>Auto-highlight</strong>. From then on, any cell you type or paste code into is coloured in its detected language as soon as you finish editing it. Cells that don't look like code, such as notes and labels, are left alone. Auto-highlight works while Code Highlighter is running, which starts the first time you use it in a workbook. To have it running as soon as a workbook opens, tick <strong>Start Code Highlighter when this workbook opens</strong> in Code Settings and save the workbook.</p>
+
+      <h2>Themes and fonts</h2>
+      <p>Code Settings offers Dark+, Light+, GitHub Light, Monokai and One Dark themes, a choice of monospace fonts and sizes, and options to fill the cell with the theme's background, widen the column to fit the code and fit the row height. To restyle cells that are already highlighted, select them and choose Highlight again.</p>
+
+      <h2>Remove highlighting</h2>
+      <p>Select the cells and choose <strong>Home › Remove</strong>. The text becomes black and the cell fill is cleared; your code is not changed.</p>
+
+      <h2>Requirements and limits</h2>
+      <ul>
+        <li>Excel for Windows or Mac (Microsoft 365) or Excel on the web, recent enough to support the Excel JavaScript API 1.18.</li>
+        <li>Excel shows at most 409 points of row height, so very long code in one cell is cut off on screen; the code itself is kept in full.</li>
+        <li>An Excel cell holds at most 32,767 characters.</li>
+      </ul>
+
+      <h2>Contact</h2>
+      <p>Questions or problems: <a href="mailto:ariesking543@yahoo.com">ariesking543@yahoo.com</a></p>
+    </main>
+  </body>
+</html>
