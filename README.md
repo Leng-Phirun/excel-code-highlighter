@@ -4,7 +4,7 @@ An Office add-in that syntax-highlights code inside Excel cells in 31 languages:
 
 - **Highlight** (Home tab): colours the code in the selected cells, detecting each cell's language unless one is chosen in Code Settings.
 - **Remove** (Home tab): turns highlighted cells back to plain black text with no fill.
-- **Code Settings** (Home tab): language (or auto-detect), theme (Dark+, Light+, GitHub Light, Monokai, One Dark), font, size, fill/column/row options, and **auto-highlight**, which colours any cell you type or paste code into as soon as you finish editing it.
+- **Code Settings** (Home tab): language (or auto-detect), theme (Dark+, Light+, Light Grey, GitHub Light, Monokai, One Dark), font, size, fill/column/row options, and **auto-highlight**, which colours any cell you type or paste code into as soon as you finish editing it.
 
 Each language has its own hand-written lexer, so highlighting follows the real syntax: f-strings and template literals highlight the code inside them, shell commands are told apart from their flags and arguments (and terminal prompts like `user@host:~$` are dimmed), HTML colours embedded `<script>` and `<style>` blocks, and so on. Detection is deliberately cautious: ordinary notes and labels score zero and are never auto-highlighted.
 

@@ -81,6 +81,13 @@ function initPane(): void {
   for (const id of ["language", "theme", "font", "size", "fill", "fit-columns", "autofit-rows"]) {
     byId(id).addEventListener("change", onChange);
   }
+  // A theme whose point is its background (Light Grey) is no use without the fill.
+  select("theme").addEventListener("change", () => {
+    if (getTheme(select("theme").value).fillCells && !checkbox("fill").checked) {
+      checkbox("fill").checked = true;
+      onChange();
+    }
+  });
 
   // Each open workbook runs its own copy of the add-in; follow changes made in the others.
   window.addEventListener("storage", async (event) => {

@@ -13,6 +13,8 @@ export interface Theme {
   background: string;
   foreground: string;
   tokens: Partial<Record<TokenType, TokenStyle>>;
+  /** The background is the point of the theme, so choosing it turns on cell fill. */
+  fillCells?: boolean;
 }
 
 /** When a theme leaves a token type out, it is drawn like its fallback. */
@@ -42,6 +44,71 @@ const FALLBACK: Partial<Record<TokenType, TokenType>> = {
 };
 
 const c = (color: string, extra: Omit<TokenStyle, "color"> = {}): TokenStyle => ({ color, ...extra });
+
+const LIGHT_PLUS: Theme = {
+  id: "light-plus",
+  name: "Light+ (VS Code)",
+  dark: false,
+  background: "#FFFFFF",
+  foreground: "#000000",
+  tokens: {
+    keyword: c("#0000FF"),
+    control: c("#AF00DB"),
+    storage: c("#0000FF"),
+    constant: c("#0000FF"),
+    self: c("#0000FF"),
+    constantVar: c("#0070C1"),
+    variable: c("#001080"),
+    function: c("#795E26"),
+    builtin: c("#795E26"),
+    type: c("#267F99"),
+    class: c("#267F99"),
+    decorator: c("#795E26"),
+    string: c("#A31515"),
+    escape: c("#EE0000"),
+    interpolation: c("#0000FF"),
+    regex: c("#811F3F"),
+    property: c("#0451A5"),
+    attribute: c("#E50000"),
+    tag: c("#800000"),
+    selector: c("#800000"),
+    heading: c("#800000", { bold: true }),
+    strong: c("#000000", { bold: true }),
+    emphasis: c("#000000", { italic: true }),
+    link: c("#0451A5"),
+    inserted: c("#098658"),
+    deleted: c("#A31515"),
+    comment: c("#008000"),
+    number: c("#098658"),
+    operator: c("#000000"),
+    punctuation: c("#000000"),
+    bracket0: c("#0431FA"),
+    bracket1: c("#319331"),
+    bracket2: c("#7B3814"),
+  },
+};
+
+/**
+ * Light+ on Excel's light grey (White, Background 1, Darker 5%), so highlighted cells read
+ * like a code block. The colours that would drop below 4.5:1 contrast on grey are a shade darker.
+ */
+const LIGHT_GREY: Theme = {
+  ...LIGHT_PLUS,
+  id: "light-grey",
+  name: "Light Grey",
+  background: "#F2F2F2",
+  fillCells: true,
+  tokens: {
+    ...LIGHT_PLUS.tokens,
+    type: c("#23768E"),
+    class: c("#23768E"),
+    escape: c("#DD0000"),
+    attribute: c("#DC0000"),
+    inserted: c("#087D52"),
+    number: c("#087D52"),
+    bracket1: c("#2A7D2A"),
+  },
+};
 
 export const THEMES: Theme[] = [
   {
@@ -86,48 +153,8 @@ export const THEMES: Theme[] = [
       bracket2: c("#179FFF"),
     },
   },
-  {
-    id: "light-plus",
-    name: "Light+ (VS Code)",
-    dark: false,
-    background: "#FFFFFF",
-    foreground: "#000000",
-    tokens: {
-      keyword: c("#0000FF"),
-      control: c("#AF00DB"),
-      storage: c("#0000FF"),
-      constant: c("#0000FF"),
-      self: c("#0000FF"),
-      constantVar: c("#0070C1"),
-      variable: c("#001080"),
-      function: c("#795E26"),
-      builtin: c("#795E26"),
-      type: c("#267F99"),
-      class: c("#267F99"),
-      decorator: c("#795E26"),
-      string: c("#A31515"),
-      escape: c("#EE0000"),
-      interpolation: c("#0000FF"),
-      regex: c("#811F3F"),
-      property: c("#0451A5"),
-      attribute: c("#E50000"),
-      tag: c("#800000"),
-      selector: c("#800000"),
-      heading: c("#800000", { bold: true }),
-      strong: c("#000000", { bold: true }),
-      emphasis: c("#000000", { italic: true }),
-      link: c("#0451A5"),
-      inserted: c("#098658"),
-      deleted: c("#A31515"),
-      comment: c("#008000"),
-      number: c("#098658"),
-      operator: c("#000000"),
-      punctuation: c("#000000"),
-      bracket0: c("#0431FA"),
-      bracket1: c("#319331"),
-      bracket2: c("#7B3814"),
-    },
-  },
+  LIGHT_PLUS,
+  LIGHT_GREY,
   {
     id: "github-light",
     name: "GitHub Light",

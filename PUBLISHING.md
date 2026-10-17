@@ -74,7 +74,7 @@ Any static HTTPS host works the same way (Azure Static Web Apps, Cloudflare Page
   > • 31 languages, detected automatically per cell: Python, Bash and Linux shell commands, PowerShell, Windows Batch, SQL, JavaScript, TypeScript, Java, C#, VBA / Visual Basic, C, C++, Go, Rust, Kotlin, Swift, PHP, Ruby, R, Scala, Dart, Lua, HTML/XML, CSS, JSON, YAML, TOML/INI, Markdown, Dockerfile, Terraform/HCL and diffs.
   > • Terminal commands copied from docs keep their prompts dimmed, with commands, flags, pipes and variables told apart.
   > • Turn on auto-highlight and any cell you type or paste code into is coloured as soon as you finish editing. Notes and labels are left alone.
-  > • Choose Dark+, Light+, GitHub Light, Monokai or One Dark, any monospace font, and whether to fill the cell, widen the column and fit the row height.
+  > • Choose Dark+, Light+, Light Grey, GitHub Light, Monokai or One Dark, any monospace font, and whether to fill the cell, widen the column and fit the row height.
   > • Your code is never changed or sent anywhere. Everything runs inside Excel.
 
 
