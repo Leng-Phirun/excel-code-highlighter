@@ -16,11 +16,11 @@ An Office add-in is a small website plus a manifest that tells Excel where the w
 
 ## 2. Host the add-in
 
-**Done:** the add-in is hosted on Vercel at **https://code-highlighter-eight.vercel.app/** (team *Aries*, project *code-highlighter*, a static site with no build step). To publish a new version after changing the code (PowerShell):
+**Done:** the add-in is hosted on Vercel at **https://code-highlighter-eight.vercel.app/** (a static site with no build step). To publish a new version after changing the code (PowerShell), fill in the Team ID (team Settings › General) and Project ID (project Settings › General) from the Vercel dashboard:
 
 ```powershell
 $env:ADDIN_PUBLIC_URL = "https://code-highlighter-eight.vercel.app/"; npm run build
-$env:VERCEL_ORG_ID = "team_weWrVnpEuvhjwnSr2WvLct98"; $env:VERCEL_PROJECT_ID = "prj_BrH42Rtgtp2aulVLXqQTEDaIiSS2"; vercel deploy dist --prod --yes
+$env:VERCEL_ORG_ID = "<Team ID>"; $env:VERCEL_PROJECT_ID = "<Project ID>"; vercel deploy dist --prod --yes
 ```
 
 Increase `<Version>` in `manifest.xml` before rebuilding whenever the manifest itself changes. Keep the URL the same: installed copies and the store listing point at it.
