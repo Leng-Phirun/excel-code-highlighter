@@ -20,6 +20,15 @@
       <p>Code Highlighter colours code inside worksheet cells, the way a code editor does.</p>
       <p>Supported languages (31): Python, Bash and Linux shell commands, PowerShell, Windows Batch, SQL, JavaScript, TypeScript, Java, C#, VBA / Visual Basic, C, C++, Go, Rust, Kotlin, Swift, PHP, Ruby, R, Scala, Dart, Lua, HTML/XML, CSS, JSON, YAML, TOML/INI, Markdown, Dockerfile, Terraform/HCL and diffs.</p>
 
+      <h2>Install</h2>
+      <p>Code Highlighter isn't in the Office store; you install it by giving Excel its manifest file. <a href="manifest.xml" download="manifest.xml"><strong>Download manifest.xml</strong></a>. Updates arrive automatically, because the add-in loads from the web each time.</p>
+      <ul>
+        <li><strong>Excel on the web (easiest):</strong> open a workbook, select <strong>Home › Add-ins › More Settings</strong>, then <strong>Upload My Add-in</strong>, browse to <code>manifest.xml</code> and select <strong>Upload</strong>. Excel remembers it in that browser.</li>
+        <li><strong>Excel for Windows:</strong> put <code>manifest.xml</code> in a folder, share the folder (<strong>Properties › Sharing › Share</strong>) and note its network path, add that path under <strong>File › Options › Trust Center › Trust Center Settings › Trusted Add-in Catalogs</strong> with <strong>Show in Menu</strong> ticked, restart Excel, then choose <strong>Home › Add-ins › Advanced › SHARED FOLDER › Code Highlighter › Add</strong>.</li>
+        <li><strong>Excel for Mac:</strong> quit Excel, copy <code>manifest.xml</code> into <code>~/Library/Containers/com.microsoft.Excel/Data/Documents/wef</code> (create the folder if needed), open Excel and choose <strong>Home › Add-ins › Code Highlighter</strong>.</li>
+        <li><strong>Organisations:</strong> a Microsoft 365 admin can install it for everyone under <strong>admin.microsoft.com › Settings › Integrated apps › Upload custom apps</strong>.</li>
+      </ul>
+
       <h2>Highlight code</h2>
       <ol>
         <li>Type or paste code into a cell. Press <kbd>Alt</kbd>+<kbd>Enter</kbd> (Windows) or <kbd>Option</kbd>+<kbd>Return</kbd> (Mac) for a new line inside a cell.</li>

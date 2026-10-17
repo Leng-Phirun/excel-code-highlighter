@@ -2,6 +2,8 @@
 
 An Office add-in is a small website plus a manifest that tells Excel where the website is. To use it anywhere, you host the website once, then either deploy the manifest yourself (fast) or list it in Microsoft Marketplace, formerly AppSource (takes weeks).
 
+**Current choice (18 October 2026): no store listing.** Microsoft Marketplace needs a Partner Center account signed in with a work (Microsoft Entra) account, and this one uses a personal Microsoft account. The add-in is distributed instead through the GitHub repository and the hosted manifest at https://code-highlighter-eight.vercel.app/manifest.xml; people install it as described under *Install* in [README.md](README.md). Section 4 stays here in case you get a work account later.
+
 ## 1. Your details
 
 | Where | Value |
@@ -48,7 +50,9 @@ npx office-addin-manifest validate dist/manifest.xml
 
 **Microsoft 365 admin center (recommended if you manage your Microsoft 365 Business tenant).** Go to admin.microsoft.com → Settings → Integrated apps → Upload custom apps, choose Office Add-in, and upload `dist/manifest.xml`. Assign it to yourself, or to everyone. Within a few hours it appears on the Home tab in Excel for Windows, Mac and the web, wherever you sign in.
 
-**Excel on the web, just for you.** Home → Add-ins → More Add-ins → My Add-ins → Upload My Add-in, then pick `dist/manifest.xml`. Good for testing the hosted version.
+**Excel on the web, just for you.** Home → Add-ins → More Settings → Upload My Add-in, then pick `dist/manifest.xml`. Good for testing the hosted version.
+
+**Anyone, from GitHub.** Attach `dist/manifest.xml` to a GitHub release so people can download it next to the source, and point them at the *Install* section of [README.md](README.md) (Excel on the web, the Windows shared-folder catalog, the Mac `wef` folder, or their admin center). Because the manifest points at the hosted site, redeploying to Vercel updates everyone at once; publish a new release only when the manifest itself changes, with a higher `<Version>`.
 
 ## 4. Submit to Microsoft Marketplace
 
