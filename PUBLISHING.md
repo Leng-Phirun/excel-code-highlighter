@@ -42,7 +42,7 @@ Any static HTTPS host works the same way (Azure Static Web Apps, Cloudflare Page
 
 **Excel on the web, just for you.** Home → Add-ins → More Settings → Upload My Add-in, then pick `dist/manifest.xml`. Good for testing the hosted version.
 
-**Anyone, from GitHub.** Attach `dist/manifest.xml` to a GitHub release so people can download it next to the source, and point them at the *Install* section of [README.md](README.md) (Excel on the web, the Windows shared-folder catalog, the Mac `wef` folder, or their admin center). Because the manifest points at the hosted site, each push to `main` updates everyone at once; publish a new release only when the manifest itself changes, with a higher `<Version>` (see section 2).
+**Anyone, from GitHub.** Point people at the *Install* section of [README.md](README.md): one command on Windows or Mac (the scripts in `install/`, served from GitHub Pages with the host address filled in by the build), an upload in Excel on the web, or their admin center. Attach `dist/manifest.xml` to each GitHub release for the web and admin-center routes. Because the manifest points at the hosted site, each push to `main` updates everyone at once; publish a new release only when the manifest itself changes, with a higher `<Version>` (see section 2).
 
 ## 4. Submit to Microsoft Marketplace
 

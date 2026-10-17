@@ -12,6 +12,10 @@ function withSlash(url) {
   return url.endsWith("/") ? url : `${url}/`;
 }
 
+function withHostUrl(content, dev) {
+  return dev ? content : content.toString().replace(new RegExp(urlDev, "g"), urlProd);
+}
+
 async function getHttpsOptions() {
   // Loaded lazily so production builds never touch the dev certificates.
   const devCerts = require("office-addin-dev-certs");
@@ -56,10 +60,10 @@ module.exports = async (env, options) => {
           {
             from: "manifest*.xml",
             to: "[name][ext]",
-            transform(content) {
-              return dev ? content : content.toString().replace(new RegExp(urlDev, "g"), urlProd);
-            },
+            transform: (content) => withHostUrl(content, dev),
           },
+          // One-command installers, served next to the manifest they download.
+          { from: "install/*", to: "[name][ext]", transform: (content) => withHostUrl(content, dev) },
         ],
       }),
     ],
