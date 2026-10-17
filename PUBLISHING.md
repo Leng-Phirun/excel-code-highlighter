@@ -2,7 +2,7 @@
 
 An Office add-in is a small website plus a manifest that tells Excel where the website is. To use it anywhere, you host the website once, then either deploy the manifest yourself (fast) or list it in Microsoft Marketplace, formerly AppSource (takes weeks).
 
-**Current choice (18 October 2026): no store listing.** Microsoft Marketplace needs a Partner Center account signed in with a work (Microsoft Entra) account, and this one uses a personal Microsoft account. The add-in is distributed instead through the GitHub repository and the hosted manifest at https://code-highlighter-eight.vercel.app/manifest.xml; people install it as described under *Install* in [README.md](README.md). Section 4 stays here in case you get a work account later.
+**Current choice (18 October 2026): no store listing.** Microsoft Marketplace needs a Partner Center account signed in with a work (Microsoft Entra) account, and this one uses a personal Microsoft account. Everything is on GitHub instead: the code in this repository, the add-in hosted on GitHub Pages, and `manifest.xml` attached to each GitHub release. People install it as described under *Install* in [README.md](README.md). Section 4 stays here in case you get a work account later.
 
 ## 1. Your details
 
@@ -16,35 +16,25 @@ An Office add-in is a small website plus a manifest that tells Excel where the w
 
 ## 2. Host the add-in
 
-**Done:** the add-in is hosted on Vercel at **https://code-highlighter-eight.vercel.app/** (a static site with no build step). To publish a new version after changing the code (PowerShell), fill in the Team ID (team Settings › General) and Project ID (project Settings › General) from the Vercel dashboard:
+**Done:** the add-in is hosted on GitHub Pages at **https://leng-phirun.github.io/excel-code-highlighter/**. Every push to `main` runs [.github/workflows/pages.yml](.github/workflows/pages.yml), which type-checks, lints and tests the code, builds it with that address and deploys `dist/` to Pages; follow it under the repository's **Actions** tab. Installed copies load the new version the next time Excel opens the add-in.
+
+Keep the address the same: every installed manifest points at it. The site must stay online, because Excel loads the add-in from it every time.
+
+### Release a new manifest
+
+Only needed when `manifest.xml` itself changes (name, buttons, icons, permissions, requirements). Increase `<Version>` in `manifest.xml`, push, wait for the Pages deploy to finish, then attach the production manifest to a new release (PowerShell):
 
 ```powershell
-$env:ADDIN_PUBLIC_URL = "https://code-highlighter-eight.vercel.app/"; npm run build
-$env:VERCEL_ORG_ID = "<Team ID>"; $env:VERCEL_PROJECT_ID = "<Project ID>"; vercel deploy dist --prod --yes
-```
-
-Increase `<Version>` in `manifest.xml` before rebuilding whenever the manifest itself changes. Keep the URL the same: installed copies and the store listing point at it.
-
-Any other static HTTPS host also works (GitHub Pages, Azure Static Web Apps, Cloudflare Pages, Netlify). It must stay online, because Excel loads the add-in from it every time.
-
-Build with your host's URL so the production manifest points there (PowerShell):
-
-```powershell
-$env:ADDIN_PUBLIC_URL = "https://your-host.example.com/"; npm run build
-```
-
-Upload everything in `dist/` to the root of that URL. Check that these open in a browser:
-
-- `https://your-host.example.com/taskpane.html`
-- `https://your-host.example.com/support.html`
-- `https://your-host.example.com/privacy.html`
-- `https://your-host.example.com/terms.html`
-
-`dist/manifest.xml` is the production manifest. Validate it:
-
-```bash
+$env:ADDIN_PUBLIC_URL = "https://leng-phirun.github.io/excel-code-highlighter/"; npm run build
 npx office-addin-manifest validate dist/manifest.xml
+gh release create v1.0.2 dist/manifest.xml --title "Code Highlighter 1.0.2" --notes "What changed, and that people should install the new manifest."
 ```
+
+Anyone who installed an older manifest needs to install the new one.
+
+### Another host
+
+Any static HTTPS host works the same way (Azure Static Web Apps, Cloudflare Pages, Netlify). Build with its address in `ADDIN_PUBLIC_URL`, upload everything in `dist/` to the root of that address, and check that `taskpane.html`, `support.html`, `privacy.html` and `terms.html` open in a browser. Moving host changes every URL in the manifest, so it needs a new manifest release, and the privacy policy names the host.
 
 ## 3. Use it everywhere now, without the store
 
@@ -52,7 +42,7 @@ npx office-addin-manifest validate dist/manifest.xml
 
 **Excel on the web, just for you.** Home → Add-ins → More Settings → Upload My Add-in, then pick `dist/manifest.xml`. Good for testing the hosted version.
 
-**Anyone, from GitHub.** Attach `dist/manifest.xml` to a GitHub release so people can download it next to the source, and point them at the *Install* section of [README.md](README.md) (Excel on the web, the Windows shared-folder catalog, the Mac `wef` folder, or their admin center). Because the manifest points at the hosted site, redeploying to Vercel updates everyone at once; publish a new release only when the manifest itself changes, with a higher `<Version>`.
+**Anyone, from GitHub.** Attach `dist/manifest.xml` to a GitHub release so people can download it next to the source, and point them at the *Install* section of [README.md](README.md) (Excel on the web, the Windows shared-folder catalog, the Mac `wef` folder, or their admin center). Because the manifest points at the hosted site, each push to `main` updates everyone at once; publish a new release only when the manifest itself changes, with a higher `<Version>` (see section 2).
 
 ## 4. Submit to Microsoft Marketplace
 
