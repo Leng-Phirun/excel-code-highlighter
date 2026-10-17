@@ -14,9 +14,16 @@ Requires Microsoft 365 Excel for Windows (Version 2501+), Mac (16.93+) or Excel 
 
 ## Install
 
-Code Highlighter isn't in the Office store; you install it with one command. It runs from GitHub Pages, so updates arrive automatically and you never need to reinstall unless a release says so.
+Code Highlighter isn't in the Office store. Pick one of two ways to install it:
 
-### Windows
+- **[Easy way](#easy-way-one-command):** paste one command; it does the setup for you.
+- **[Manual way](#manual-way-step-by-step):** do the same setup yourself, step by step, without running a script.
+
+Both end in the same place. The add-in runs from GitHub Pages, so updates arrive automatically and you only reinstall when a release says so.
+
+### Easy way: one command
+
+#### Windows
 
 Open **PowerShell** (Start menu › type *PowerShell*), paste this and press Enter:
 
@@ -26,7 +33,7 @@ irm https://leng-phirun.github.io/excel-code-highlighter/install.ps1 | iex
 
 Choose **Yes** when Windows asks for permission. Then, once, in Excel: **Home › Add-ins › Advanced**, open the **SHARED FOLDER** tab, select **Code Highlighter** and choose **Add**. The **Code** group stays on the Home tab from then on.
 
-The script downloads the manifest to `%USERPROFILE%\CodeHighlighter`, shares that folder as `\\localhost\CodeHighlighter` (read-only, for your account only; this is the step that needs permission) and adds it to Excel's trusted add-in catalogs. That's Microsoft's [shared-folder method](https://learn.microsoft.com/office/dev/add-ins/testing/create-a-network-shared-folder-catalog-for-task-pane-and-content-add-ins), automated. Without permission it registers Code Highlighter as a developer add-in instead, which you choose under **Home › Add-ins** each time Excel starts. [Read the script](install/install.ps1) before running it if you like.
+The script downloads the manifest to `%USERPROFILE%\CodeHighlighter`, shares that folder as `\\localhost\CodeHighlighter` (read-only, for your account only; this is the step that needs permission) and adds it to Excel's trusted add-in catalogs: the manual way below, automated. Without permission it registers Code Highlighter as a developer add-in instead, which you choose under **Home › Add-ins** each time Excel starts. [Read the script](install/install.ps1) before running it if you like.
 
 To remove it:
 
@@ -34,7 +41,7 @@ To remove it:
 irm https://leng-phirun.github.io/excel-code-highlighter/uninstall.ps1 | iex
 ```
 
-### Mac
+#### Mac
 
 Open Excel once, quit it, then open **Terminal**, paste this and press Return:
 
@@ -42,15 +49,46 @@ Open Excel once, quit it, then open **Terminal**, paste this and press Return:
 curl -fsSL https://leng-phirun.github.io/excel-code-highlighter/install.sh | sh
 ```
 
-Open Excel and choose **Home › Add-ins › Code Highlighter**. The script copies the manifest into `~/Library/Containers/com.microsoft.Excel/Data/Documents/wef`, the folder Excel for Mac loads add-ins from ([script](install/install.sh)). To remove it, run the same command with `uninstall.sh`.
+Open Excel and choose **Home › Add-ins › Code Highlighter**. The script copies the manifest into Excel's add-in folder ([script](install/install.sh)). To remove it, run the same command with `uninstall.sh`.
 
-### Excel on the web
+#### Excel on the web
 
-No script needed. **[Download manifest.xml](https://github.com/Leng-Phirun/excel-code-highlighter/releases/latest/download/manifest.xml)**, open a workbook in Excel on the web, choose **Home › Add-ins › More Settings › Upload My Add-in**, and upload the file. Excel remembers it in that browser; after clearing the browser's data or switching browsers, upload it again.
+There's no command for the web; it's already a single upload. See *Excel on the web* under the manual way.
 
-### Everyone in an organisation
+### Manual way: step by step
 
-A Microsoft 365 admin can install it for all users: **admin.microsoft.com › Settings › Integrated apps › Upload custom apps**, choose **Office Add-in**, upload `manifest.xml` from the [latest release](https://github.com/Leng-Phirun/excel-code-highlighter/releases/latest), and assign it. It then appears in Excel on Windows, Mac and the web for everyone assigned.
+First **[download manifest.xml](https://github.com/Leng-Phirun/excel-code-highlighter/releases/latest/download/manifest.xml)** from the [latest release](https://github.com/Leng-Phirun/excel-code-highlighter/releases/latest). It's the small file that tells Excel where the add-in lives.
+
+#### Windows
+
+Excel for Windows installs add-ins from a shared folder ([Microsoft's guide](https://learn.microsoft.com/office/dev/add-ins/testing/create-a-network-shared-folder-catalog-for-task-pane-and-content-add-ins)):
+
+1. Create a folder, for example `C:\OfficeAddins`, and put `manifest.xml` in it.
+2. Right-click the folder › **Properties › Sharing › Share**, choose your own account, select **Share** (Windows asks for permission), and note the network path it shows, for example `\\YOUR-PC\OfficeAddins`.
+3. In Excel: **File › Options › Trust Center › Trust Center Settings › Trusted Add-in Catalogs**. Paste the network path into **Catalog Url**, select **Add catalog**, tick **Show in Menu**, and select **OK** twice.
+4. Close and reopen Excel, then choose **Home › Add-ins › Advanced**, open the **SHARED FOLDER** tab, select **Code Highlighter** and choose **Add**.
+
+To remove it: delete the catalog in the same Trust Center page, stop sharing the folder (**Properties › Sharing › Advanced Sharing**, untick **Share this folder**), delete the folder, and restart Excel.
+
+#### Mac
+
+1. Quit Excel.
+2. In Finder press **Cmd+Shift+G** and go to `~/Library/Containers/com.microsoft.Excel/Data/Documents/wef` (create the `wef` folder if it doesn't exist).
+3. Copy `manifest.xml` into it, open Excel, and choose **Home › Add-ins › Code Highlighter**.
+
+To remove it, delete `manifest.xml` from that folder and restart Excel.
+
+#### Excel on the web
+
+1. Open a workbook in Excel on the web.
+2. Choose **Home › Add-ins › More Settings**.
+3. Select **Upload My Add-in**, **Browse** to `manifest.xml`, and select **Upload**.
+
+Excel remembers it in that browser; after clearing the browser's data or switching browsers, upload it again.
+
+#### Everyone in an organisation
+
+A Microsoft 365 admin can install it for all users: **admin.microsoft.com › Settings › Integrated apps › Upload custom apps**, choose **Office Add-in**, upload `manifest.xml`, and assign it. It then appears in Excel on Windows, Mac and the web for everyone assigned.
 
 ## Project layout
 

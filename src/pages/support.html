@@ -10,6 +10,7 @@
       main { max-width: 720px; margin: 0 auto; padding: 32px 16px 64px; }
       h1 { font-size: 28px; margin-bottom: 4px; }
       h2 { font-size: 20px; margin-top: 32px; }
+      h3 { font-size: 17px; margin: 20px 0 4px; }
       code { font-family: Consolas, Menlo, monospace; font-size: 0.95em; }
       li { margin: 4px 0; }
     </style>
@@ -21,14 +22,23 @@
       <p>Supported languages (31): Python, Bash and Linux shell commands, PowerShell, Windows Batch, SQL, JavaScript, TypeScript, Java, C#, VBA / Visual Basic, C, C++, Go, Rust, Kotlin, Swift, PHP, Ruby, R, Scala, Dart, Lua, HTML/XML, CSS, JSON, YAML, TOML/INI, Markdown, Dockerfile, Terraform/HCL and diffs.</p>
 
       <h2>Install</h2>
-      <p>Code Highlighter isn't in the Office store; you install it with one command. Updates arrive automatically, because the add-in loads from the web each time.</p>
+      <p>Code Highlighter isn't in the Office store. Install it the easy way, with one command, or the manual way, step by step without a script. Either way, updates arrive automatically, because the add-in loads from the web each time.</p>
+
+      <h3>Easy way: one command</h3>
       <ul>
         <li><strong>Windows:</strong> open PowerShell, run <code>irm https://leng-phirun.github.io/excel-code-highlighter/install.ps1 | iex</code> and choose <strong>Yes</strong> when Windows asks for permission. Then, once, in Excel: <strong>Home › Add-ins › Advanced › SHARED FOLDER › Code Highlighter › Add</strong>. To remove it, run the same command with <code>uninstall.ps1</code>.</li>
         <li><strong>Mac:</strong> open Excel once and quit it, run <code>curl -fsSL https://leng-phirun.github.io/excel-code-highlighter/install.sh | sh</code> in Terminal, then open Excel and choose <strong>Home › Add-ins › Code Highlighter</strong>. To remove it, run the same command with <code>uninstall.sh</code>.</li>
-        <li><strong>Excel on the web:</strong> <a href="manifest.xml" download="manifest.xml">download manifest.xml</a>, open a workbook, choose <strong>Home › Add-ins › More Settings › Upload My Add-in</strong> and upload the file. Excel remembers it in that browser.</li>
+      </ul>
+
+      <h3>Manual way: step by step</h3>
+      <p>First <a href="manifest.xml" download="manifest.xml">download manifest.xml</a>, the small file that tells Excel where the add-in lives.</p>
+      <ul>
+        <li><strong>Windows:</strong> put <code>manifest.xml</code> in a folder, share the folder with your own account (<strong>Properties › Sharing › Share</strong>) and note its network path, add that path under <strong>File › Options › Trust Center › Trust Center Settings › Trusted Add-in Catalogs</strong> with <strong>Show in Menu</strong> ticked, restart Excel, then choose <strong>Home › Add-ins › Advanced › SHARED FOLDER › Code Highlighter › Add</strong>.</li>
+        <li><strong>Mac:</strong> quit Excel, copy <code>manifest.xml</code> into <code>~/Library/Containers/com.microsoft.Excel/Data/Documents/wef</code> (create the folder if needed), open Excel and choose <strong>Home › Add-ins › Code Highlighter</strong>.</li>
+        <li><strong>Excel on the web:</strong> open a workbook, choose <strong>Home › Add-ins › More Settings › Upload My Add-in</strong> and upload <code>manifest.xml</code>. Excel remembers it in that browser.</li>
         <li><strong>Organisations:</strong> a Microsoft 365 admin can install it for everyone under <strong>admin.microsoft.com › Settings › Integrated apps › Upload custom apps</strong>.</li>
       </ul>
-      <p>Step-by-step details, and what the scripts change: <a href="https://github.com/Leng-Phirun/excel-code-highlighter#install">README on GitHub</a>.</p>
+      <p>More detail, including how to remove it and what the scripts change: <a href="https://github.com/Leng-Phirun/excel-code-highlighter#install">README on GitHub</a>.</p>
 
       <h2>Highlight code</h2>
       <ol>
